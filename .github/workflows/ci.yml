@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile
+        run: ./gradlew compileJava compileTestJava
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: JaCoCo coverage report
+        run: ./gradlew jacocoTestReport
+
+      - name: Checkstyle
+        run: ./gradlew checkstyleMain
+
+      - name: SpotBugs
+        run: ./gradlew spotbugsMain
+
+      - name: PMD
+        run: ./gradlew pmdMain
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports
+          path: |
+            app/build/reports/tests/
+            app/build/reports/jacoco/
+            app/build/reports/checkstyle/
+            app/build/reports/spotbugs/
+            app/build/reports/pmd/

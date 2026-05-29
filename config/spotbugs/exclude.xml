@@ -1,0 +1,17 @@
+<FindBugsFilter>
+  <!-- CLI main entry — System.exit() calls are intentional -->
+  <Match>
+    <Class name="~pet\.money\.tracker\.cli\..*"/>
+    <Bug pattern="DM_EXIT"/>
+  </Match>
+  <!-- Java records generate equals() that SpotBugs may flag -->
+  <Match>
+    <Class name="~pet\.money\.tracker\.model\..*"/>
+    <Bug pattern="EQ_UNUSUAL"/>
+  </Match>
+  <!-- Relax missing @Serial on simple exception subclasses -->
+  <Match>
+    <Class name="~pet\.money\.tracker\.exception\..*"/>
+    <Bug pattern="SE_NO_SERIALVERSIONID"/>
+  </Match>
+</FindBugsFilter>
