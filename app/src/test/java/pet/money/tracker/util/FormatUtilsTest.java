@@ -30,6 +30,30 @@ class FormatUtilsTest {
     }
 
     @Test
+    void formatTransaction_longId_isTruncatedToEightChars() {
+        Transaction t = new Transaction("a1b2c3d4-long-uuid", "Coffee", new BigDecimal("3.50"),
+                Category.FOOD, LocalDate.of(2024, 1, 15), null);
+        String row = FormatUtils.formatTransaction(t);
+        assertThat(row).doesNotContain("a1b2c3d4-long-uuid");
+    }
+
+    @Test
+    void formatTransaction_withDescription_includesDescription() {
+        Transaction t = new Transaction("abc12345", "Coffee", new BigDecimal("3.50"),
+                Category.FOOD, LocalDate.of(2024, 1, 15), "my note");
+        assertThat(FormatUtils.formatTransaction(t)).contains("my note");
+    }
+
+    @Test
+    void formatTransaction_longTitle_isTruncated() {
+        Transaction t = new Transaction("abc12345",
+                "This title is definitely longer than twenty-five characters",
+                new BigDecimal("3.50"), Category.FOOD, LocalDate.of(2024, 1, 15), null);
+        String row = FormatUtils.formatTransaction(t);
+        assertThat(row).doesNotContain("This title is definitely longer than twenty-five characters");
+    }
+
+    @Test
     void tableHeader_returnsNonNull() {
         assertThat(FormatUtils.tableHeader()).isNotNull().isNotBlank();
     }

@@ -167,6 +167,41 @@ class TransactionServiceTest {
     }
 
     @Test
+    void update_allFieldsProvided_updatesAll() {
+        Transaction existing = tx("id-1", "Coffee", new BigDecimal("3.00"),
+                Category.FOOD, LocalDate.of(2024, 1, 10), "old");
+        TransactionService service = buildService(List.of(existing));
+        service.update("id-1", "Espresso", new BigDecimal("4.50"),
+                Category.OTHER, LocalDate.of(2024, 2, 20), "new note");
+        Transaction updated = service.findById("id-1");
+        assertThat(updated.getTitle()).isEqualTo("Espresso");
+        assertThat(updated.getAmount()).isEqualByComparingTo(new BigDecimal("4.50"));
+        assertThat(updated.getCategory()).isEqualTo(Category.OTHER);
+        assertThat(updated.getDate()).isEqualTo(LocalDate.of(2024, 2, 20));
+        assertThat(updated.getDescription()).isEqualTo("new note");
+    }
+
+    @Test
+    void sortByAmount_ascending_smallestFirst() {
+        TransactionService service = buildService(List.of());
+        List<Transaction> input = List.of(
+                tx("1", "A", new BigDecimal("10.00"), Category.FOOD, LocalDate.now(), null),
+                tx("2", "B", new BigDecimal("5.00"), Category.FOOD, LocalDate.now(), null));
+        List<Transaction> sorted = service.sortByAmount(input, true);
+        assertThat(sorted.get(0).getAmount()).isEqualByComparingTo(new BigDecimal("5.00"));
+    }
+
+    @Test
+    void sortByDate_descending_newestFirst() {
+        TransactionService service = buildService(List.of());
+        List<Transaction> input = List.of(
+                tx("1", "Old", BigDecimal.ONE, Category.FOOD, LocalDate.of(2024, 1, 1), null),
+                tx("2", "New", BigDecimal.ONE, Category.FOOD, LocalDate.of(2024, 3, 1), null));
+        List<Transaction> sorted = service.sortByDate(input, false);
+        assertThat(sorted.get(0).getDate()).isEqualTo(LocalDate.of(2024, 3, 1));
+    }
+
+    @Test
     void filterByCategoryAndDateRange_outOfRange_excluded() {
         LocalDate from = LocalDate.of(2024, 1, 1);
         LocalDate to = LocalDate.of(2024, 6, 30);

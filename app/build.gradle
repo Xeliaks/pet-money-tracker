@@ -49,6 +49,13 @@ jacoco {
     toolVersion = '0.8.12'
 }
 
+def jacocoExcludes = [
+    'pet/money/tracker/cli/**',
+    'pet/money/tracker/exception/**',
+    'pet/money/tracker/patterns/**',
+    'pet/money/tracker/App.class'
+]
+
 jacocoTestReport {
     dependsOn test
     reports {
@@ -58,15 +65,17 @@ jacocoTestReport {
     }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                'pet/money/tracker/cli/**',
-                'pet/money/tracker/exception/**'
-            ])
+            fileTree(dir: it, exclude: jacocoExcludes)
         }))
     }
 }
 
 jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExcludes)
+        }))
+    }
     violationRules {
         rule {
             limit {
