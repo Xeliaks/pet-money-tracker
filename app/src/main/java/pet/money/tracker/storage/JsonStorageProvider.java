@@ -28,21 +28,24 @@ public class JsonStorageProvider implements StorageProvider {
     }
 
     @Override
-    public List<Transaction> loadAll() throws StorageException {
+    public List<Transaction> loadAll() {
         if (!Files.exists(filePath)) {
             return new ArrayList<>();
         }
         try {
-            return mapper.readValue(filePath.toFile(), new TypeReference<List<Transaction>>() {});
+            return mapper.readValue(filePath.toFile(), new TypeReference<>() {});
         } catch (IOException e) {
             throw new StorageException("Failed to read data from " + filePath, e);
         }
     }
 
     @Override
-    public void saveAll(List<Transaction> transactions) throws StorageException {
+    public void saveAll(List<Transaction> transactions) {
         try {
-            Files.createDirectories(filePath.getParent());
+            Path parent = filePath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             mapper.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), transactions);
         } catch (IOException e) {
             throw new StorageException("Failed to write data to " + filePath, e);

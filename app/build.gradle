@@ -97,7 +97,7 @@ jacocoTestCoverageVerification {
 checkstyle {
     toolVersion    = '10.21.4'
     configFile     = file("${rootDir}/config/checkstyle/checkstyle.xml")
-    ignoreFailures = true   // Wave 4: flip to false
+    ignoreFailures = false
     showViolations = true
 }
 
@@ -106,7 +106,7 @@ checkstyle {
 spotbugs {
     toolVersion    = '4.9.3'
     excludeFilter  = file("${rootDir}/config/spotbugs/exclude.xml")
-    ignoreFailures = true   // Wave 4: flip to false
+    ignoreFailures = false
     effort         = 'max'
     reportLevel    = 'medium'
 }
@@ -125,5 +125,10 @@ pmd {
     consoleOutput  = true
     ruleSetFiles   = files("${rootDir}/config/pmd/ruleset.xml")
     ruleSets       = []
-    ignoreFailures = true   // Wave 4: flip to false
+    ignoreFailures = false
+}
+
+pmdTest {
+    ruleSetFiles = files("${rootDir}/config/pmd/ruleset-test.xml")
+    ruleSets     = []
 }

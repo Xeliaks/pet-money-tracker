@@ -26,7 +26,7 @@ public final class DateUtils {
         try {
             return LocalDate.parse(dateStr);
         } catch (DateTimeParseException e) {
-            throw new ValidationException("Invalid date '" + dateStr + "'. Use yyyy-MM-dd format.");
+            throw new ValidationException("Invalid date '" + dateStr + "'. Use yyyy-MM-dd format.", e);
         }
     }
 
