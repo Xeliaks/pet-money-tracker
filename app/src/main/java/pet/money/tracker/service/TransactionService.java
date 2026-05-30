@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import pet.money.tracker.exception.TransactionNotFoundException;
@@ -13,7 +14,7 @@ import pet.money.tracker.model.Transaction;
 import pet.money.tracker.storage.StorageProvider;
 
 /** Core business logic for managing transactions. */
-public class TransactionService {
+public final class TransactionService {
 
     private final StorageProvider storage;
     private final List<Transaction> cache;
@@ -123,7 +124,7 @@ public class TransactionService {
         if (keyword == null || keyword.isBlank()) {
             return findAll();
         }
-        String lower = keyword.toLowerCase();
+        String lower = keyword.toLowerCase(Locale.ROOT);
         return cache.stream()
                 .filter(t -> contains(t.getTitle(), lower) || contains(t.getDescription(), lower))
                 .collect(Collectors.toList());
@@ -193,6 +194,6 @@ public class TransactionService {
     }
 
     private boolean contains(String field, String lowerKeyword) {
-        return field != null && field.toLowerCase().contains(lowerKeyword);
+        return field != null && field.toLowerCase(Locale.ROOT).contains(lowerKeyword);
     }
 }
