@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pet.money.tracker.exception.StorageException;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 
 class JsonStorageProviderTest {
@@ -32,7 +33,7 @@ class JsonStorageProviderTest {
         JsonStorageProvider provider = new JsonStorageProvider(file);
 
         Transaction original = new Transaction(
-                "id-1", "Groceries", new BigDecimal("45.00"),
+                "id-1", "Groceries", Money.valueOf(new BigDecimal("45.00")),
                 Category.FOOD, LocalDate.of(2024, 6, 15), "weekly shop");
         provider.saveAll(List.of(original));
 
@@ -41,7 +42,7 @@ class JsonStorageProviderTest {
         Transaction t = loaded.get(0);
         assertThat(t.getId()).isEqualTo("id-1");
         assertThat(t.getTitle()).isEqualTo("Groceries");
-        assertThat(t.getAmount()).isEqualByComparingTo(new BigDecimal("45.00"));
+        assertThat(t.getAmount().value()).isEqualByComparingTo(new BigDecimal("45.00"));
         assertThat(t.getCategory()).isEqualTo(Category.FOOD);
         assertThat(t.getDate()).isEqualTo(LocalDate.of(2024, 6, 15));
         assertThat(t.getDescription()).isEqualTo("weekly shop");

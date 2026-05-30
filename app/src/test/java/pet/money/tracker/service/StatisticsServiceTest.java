@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 import pet.money.tracker.storage.StorageProvider;
 
@@ -30,7 +31,7 @@ class StatisticsServiceTest {
     }
 
     private Transaction tx(String id, BigDecimal amount, Category category, LocalDate date) {
-        return new Transaction(id, "title", amount, category, date, null);
+        return new Transaction(id, "title", Money.valueOf(amount), category, date, null);
     }
 
     @Test

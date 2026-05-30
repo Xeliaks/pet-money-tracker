@@ -1,6 +1,5 @@
 package pet.money.tracker.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -14,7 +13,7 @@ public class Transaction {
 
     private String id;
     private String title;
-    private BigDecimal amount;
+    private Money amount;
     private Category category;
     private LocalDate date;
     private String description;
@@ -33,7 +32,7 @@ public class Transaction {
      * @param date        transaction date
      * @param description optional free-text notes
      */
-    public Transaction(String id, String title, BigDecimal amount,
+    public Transaction(String id, String title, Money amount,
                        Category category, LocalDate date, String description) {
         this.id = id;
         this.title = title;
@@ -64,12 +63,12 @@ public class Transaction {
     }
 
     /** @return monetary amount */
-    public BigDecimal getAmount() {
+    public Money getAmount() {
         return amount;
     }
 
     /** @param amount monetary amount */
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Money amount) {
         this.amount = amount;
     }
 

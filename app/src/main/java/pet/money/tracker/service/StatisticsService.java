@@ -36,7 +36,7 @@ public class StatisticsService {
     public Map<Category, BigDecimal> totalByCategory() {
         Map<Category, BigDecimal> result = new LinkedHashMap<>();
         for (Transaction t : txService.findAll()) {
-            result.merge(t.getCategory(), t.getAmount(), BigDecimal::add);
+            result.merge(t.getCategory(), t.getAmount().value(), BigDecimal::add);
         }
         return result;
     }
@@ -48,7 +48,7 @@ public class StatisticsService {
      */
     public BigDecimal totalForPeriod(LocalDate from, LocalDate to) {
         return txService.filterByDateRange(from, to).stream()
-                .map(Transaction::getAmount)
+                .map(t -> t.getAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -63,7 +63,7 @@ public class StatisticsService {
             return BigDecimal.ZERO;
         }
         BigDecimal total = inPeriod.stream()
-                .map(Transaction::getAmount)
+                .map(t -> t.getAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return total.divide(BigDecimal.valueOf(inPeriod.size()), 2, RoundingMode.HALF_UP);
     }
@@ -73,7 +73,7 @@ public class StatisticsService {
      */
     public BigDecimal grandTotal() {
         return txService.findAll().stream()
-                .map(Transaction::getAmount)
+                .map(t -> t.getAmount().value())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

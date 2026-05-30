@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 
 class ExportServiceTest {
@@ -24,7 +25,7 @@ class ExportServiceTest {
 
     private Transaction tx(String id, String title, BigDecimal amount,
                            Category category, LocalDate date) {
-        return new Transaction(id, title, amount, category, date, "note");
+        return new Transaction(id, title, Money.valueOf(amount), category, date, "note");
     }
 
     @Test

@@ -11,7 +11,7 @@ class TransactionTest {
     private static final String TX_ID = "id-1";
 
     private Transaction make(String id) {
-        return new Transaction(id, "Coffee", new BigDecimal("3.50"),
+        return new Transaction(id, "Coffee", Money.valueOf(new BigDecimal("3.50")),
                 Category.FOOD, LocalDate.of(2024, 1, 15), "morning");
     }
 
@@ -20,7 +20,7 @@ class TransactionTest {
         Transaction t = make("abc-123");
         assertThat(t.getId()).isEqualTo("abc-123");
         assertThat(t.getTitle()).isEqualTo("Coffee");
-        assertThat(t.getAmount()).isEqualByComparingTo(new BigDecimal("3.50"));
+        assertThat(t.getAmount().value()).isEqualByComparingTo(new BigDecimal("3.50"));
         assertThat(t.getCategory()).isEqualTo(Category.FOOD);
         assertThat(t.getDate()).isEqualTo(LocalDate.of(2024, 1, 15));
         assertThat(t.getDescription()).isEqualTo("morning");
