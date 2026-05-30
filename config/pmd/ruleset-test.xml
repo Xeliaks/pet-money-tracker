@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
-<ruleset name="PET Tracker Rules"
+<ruleset name="PET Tracker Test Rules"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
         https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
-  <description>PMD rules for pet-money-tracker</description>
+  <description>PMD rules for test source — same as production but relaxed for test conventions</description>
 
   <rule ref="category/java/bestpractices.xml">
     <exclude name="GuardLogStatement"/>
     <exclude name="SystemPrintln"/>
     <exclude name="UnitTestContainsTooManyAsserts"/>
     <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
-    <!-- Cucumber suite runner has no @Test methods but is still a test entry point -->
+    <!-- Cucumber suite runner has no @Test methods but is a valid test entry point -->
     <exclude name="TestClassWithoutTestCases"/>
-    <!-- Duplicate literals in test data are acceptable; main-source violations are fixed -->
+    <!-- Repeated test-data literals (e.g. "id-1", "Coffee") are expected in tests -->
     <exclude name="AvoidDuplicateLiterals"/>
   </rule>
 
@@ -28,8 +28,13 @@
     <exclude name="MethodArgumentCouldBeFinal"/>
     <exclude name="LocalVariableCouldBeFinal"/>
     <exclude name="ShortVariable"/>
-    <!-- Override below with JUnit 5 pattern that permits underscores -->
+    <!-- setUp/tearDown-style short method names are idiomatic in test classes -->
+    <exclude name="ShortMethodName"/>
+    <!-- Test classes legitimately import many AssertJ/Mockito static helpers -->
+    <exclude name="TooManyStaticImports"/>
     <exclude name="MethodNamingConventions"/>
+    <!-- toString_containsId is a test method name, not a transformer -->
+    <exclude name="LinguisticNaming"/>
   </rule>
 
   <!-- Allow underscore-separated test method names (e.g. add_returnsId) -->
@@ -47,7 +52,6 @@
     <exclude name="ImmutableField"/>
     <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
     <exclude name="TooManyMethods"/>
-    <!-- Checkstyle already enforces cyclomatic complexity with the same threshold -->
     <exclude name="CyclomaticComplexity"/>
   </rule>
 

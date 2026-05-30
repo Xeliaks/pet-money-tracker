@@ -7,4 +7,10 @@ public class ValidationException extends AppException {
     public ValidationException(String message) {
         super(message);
     }
+
+    /** @param message description of the validation failure
+     *  @param cause   underlying parse or format exception */
+    public ValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -3,8 +3,9 @@ package pet.money.tracker.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -29,9 +30,12 @@ public class ExportService {
      * @param outputPath   destination file path
      * @throws AppException if the file cannot be written
      */
-    public void exportToJson(List<Transaction> transactions, Path outputPath) throws AppException {
+    public void exportToJson(List<Transaction> transactions, Path outputPath) {
         try {
-            Files.createDirectories(outputPath.getParent());
+            Path parent = outputPath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             ObjectMapper mapper = new ObjectMapper()
                     .registerModule(new JavaTimeModule())
                     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -49,13 +53,17 @@ public class ExportService {
      * @param outputPath   destination file path
      * @throws AppException if the file cannot be written
      */
-    public void exportToCsv(List<Transaction> transactions, Path outputPath) throws AppException {
+    public void exportToCsv(List<Transaction> transactions, Path outputPath) {
         try {
-            Files.createDirectories(outputPath.getParent());
+            Path parent = outputPath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             CSVFormat format = CSVFormat.DEFAULT.builder()
                     .setHeader(CSV_HEADERS)
                     .build();
-            try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputPath.toFile()), format)) {
+            Writer writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
+            try (CSVPrinter printer = new CSVPrinter(writer, format)) {
                 for (Transaction t : transactions) {
                     printer.printRecord(
                             t.getId(),

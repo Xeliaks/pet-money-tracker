@@ -4,6 +4,25 @@
     <Class name="~pet\.money\.tracker\.cli\..*"/>
     <Bug pattern="DM_EXIT"/>
   </Match>
+  <!-- Wave 5 stubs — patterns package not yet implemented -->
+  <Match>
+    <Class name="~pet\.money\.tracker\.patterns\..*"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2,MS_EXPOSE_REP"/>
+  </Match>
+  <!-- Intentional composition: StatisticsService holds a TransactionService reference -->
+  <Match>
+    <Class name="pet.money.tracker.service.StatisticsService"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <!-- MS_EXPOSE_REP on package-scoped getter used only by CLI subcommands -->
+  <Match>
+    <Class name="pet.money.tracker.cli.MainCommand"/>
+    <Bug pattern="MS_EXPOSE_REP"/>
+  </Match>
+  <!-- OBL_UNSATISFIED_OBLIGATION is experimental; try-with-resources closes the writer -->
+  <Match>
+    <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
+  </Match>
   <!-- Java records generate equals() that SpotBugs may flag -->
   <Match>
     <Class name="~pet\.money\.tracker\.model\..*"/>

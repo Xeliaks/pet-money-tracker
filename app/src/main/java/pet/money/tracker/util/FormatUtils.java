@@ -18,6 +18,10 @@ public final class FormatUtils {
     private static final NumberFormat AMOUNT_FORMAT =
             NumberFormat.getNumberInstance(Locale.US);
 
+    private static final String ROW_FORMAT =
+            "%-" + COL_ID + "s  %-" + COL_TITLE + "s  %" + COL_AMOUNT + "s  "
+            + "%-" + COL_CATEGORY + "s  %-" + COL_DATE + "s  %-" + COL_DESC + "s";
+
     static {
         AMOUNT_FORMAT.setMinimumFractionDigits(2);
         AMOUNT_FORMAT.setMaximumFractionDigits(2);
@@ -40,8 +44,7 @@ public final class FormatUtils {
      * @return the column header row for the transaction table
      */
     public static String tableHeader() {
-        return String.format("%-" + COL_ID + "s  %-" + COL_TITLE + "s  %" + COL_AMOUNT + "s  "
-                + "%-" + COL_CATEGORY + "s  %-" + COL_DATE + "s  %-" + COL_DESC + "s",
+        return String.format(ROW_FORMAT,
                 "ID", "TITLE", "AMOUNT", "CATEGORY", "DATE", "DESCRIPTION");
     }
 
@@ -64,8 +67,7 @@ public final class FormatUtils {
                 ? t.getId().substring(0, COL_ID)
                 : t.getId();
         String desc = t.getDescription() != null ? t.getDescription() : "";
-        return String.format("%-" + COL_ID + "s  %-" + COL_TITLE + "s  %" + COL_AMOUNT + "s  "
-                + "%-" + COL_CATEGORY + "s  %-" + COL_DATE + "s  %-" + COL_DESC + "s",
+        return String.format(ROW_FORMAT,
                 shortId,
                 truncate(t.getTitle(), COL_TITLE),
                 formatAmount(t.getAmount()),
