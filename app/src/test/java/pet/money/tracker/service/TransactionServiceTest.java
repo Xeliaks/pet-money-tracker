@@ -22,6 +22,10 @@ import pet.money.tracker.storage.StorageProvider;
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
 
+    private static final String COFFEE = "Coffee";
+    private static final String TX_ID = "id-1";
+    private static final String ESPRESSO = "Espresso";
+
     @Mock
     private StorageProvider mockStorage;
 
@@ -40,7 +44,7 @@ class TransactionServiceTest {
     @Test
     void add_returnsTransactionWithGeneratedId() {
         TransactionService service = buildService(List.of());
-        Transaction result = service.add("Coffee", new BigDecimal("3.50"), Category.FOOD,
+        Transaction result = service.add(COFFEE, new BigDecimal("3.50"), Category.FOOD,
                 LocalDate.of(2024, 1, 15), "morning coffee");
         assertThat(result.getId()).isNotNull().isNotBlank();
     }
@@ -48,7 +52,7 @@ class TransactionServiceTest {
     @Test
     void add_twoTransactions_idsAreDistinct() {
         TransactionService service = buildService(List.of());
-        Transaction t1 = service.add("Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
+        Transaction t1 = service.add(COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
         Transaction t2 = service.add("Tea", BigDecimal.TEN, Category.FOOD, LocalDate.now(), null);
         assertThat(t1.getId()).isNotEqualTo(t2.getId());
     }
@@ -56,7 +60,7 @@ class TransactionServiceTest {
     @Test
     void add_callsSaveAll() {
         TransactionService service = buildService(List.of());
-        service.add("Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
+        service.add(COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
         verify(mockStorage).saveAll(anyList());
     }
 
@@ -69,20 +73,20 @@ class TransactionServiceTest {
 
     @Test
     void delete_removesTransactionFromList() {
-        Transaction existing = tx("id-1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
+        Transaction existing = tx(TX_ID, COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null);
         TransactionService service = buildService(List.of(existing));
-        service.delete("id-1");
+        service.delete(TX_ID);
         assertThat(service.findAll()).isEmpty();
     }
 
     @Test
     void update_modifiesOnlyProvidedFields() {
-        Transaction existing = tx("id-1", "Coffee", new BigDecimal("3.00"),
+        Transaction existing = tx(TX_ID, COFFEE, new BigDecimal("3.00"),
                 Category.FOOD, LocalDate.of(2024, 1, 10), "old note");
         TransactionService service = buildService(List.of(existing));
-        service.update("id-1", "Espresso", null, null, null, null);
-        Transaction updated = service.findById("id-1");
-        assertThat(updated.getTitle()).isEqualTo("Espresso");
+        service.update(TX_ID, ESPRESSO, null, null, null, null);
+        Transaction updated = service.findById(TX_ID);
+        assertThat(updated.getTitle()).isEqualTo(ESPRESSO);
         assertThat(updated.getAmount()).isEqualByComparingTo(new BigDecimal("3.00"));
         assertThat(updated.getCategory()).isEqualTo(Category.FOOD);
         assertThat(updated.getDate()).isEqualTo(LocalDate.of(2024, 1, 10));
@@ -94,35 +98,35 @@ class TransactionServiceTest {
     @Test
     void search_nullKeyword_returnsAll() {
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
         assertThat(service.search(null)).hasSize(1);
     }
 
     @Test
     void search_blankKeyword_returnsAll() {
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
         assertThat(service.search("   ")).hasSize(1);
     }
 
     @Test
     void search_matchesTitleOnly() {
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), "breakfast")));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), "breakfast")));
         assertThat(service.search("coff")).hasSize(1);
     }
 
     @Test
     void search_matchesDescriptionOnly() {
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), "morning brew")));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), "morning brew")));
         assertThat(service.search("brew")).hasSize(1);
     }
 
     @Test
     void search_noMatch_returnsEmpty() {
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.now(), null)));
         assertThat(service.search("xyz")).isEmpty();
     }
 
@@ -168,13 +172,13 @@ class TransactionServiceTest {
 
     @Test
     void update_allFieldsProvided_updatesAll() {
-        Transaction existing = tx("id-1", "Coffee", new BigDecimal("3.00"),
+        Transaction existing = tx(TX_ID, COFFEE, new BigDecimal("3.00"),
                 Category.FOOD, LocalDate.of(2024, 1, 10), "old");
         TransactionService service = buildService(List.of(existing));
-        service.update("id-1", "Espresso", new BigDecimal("4.50"),
+        service.update(TX_ID, ESPRESSO, new BigDecimal("4.50"),
                 Category.OTHER, LocalDate.of(2024, 2, 20), "new note");
-        Transaction updated = service.findById("id-1");
-        assertThat(updated.getTitle()).isEqualTo("Espresso");
+        Transaction updated = service.findById(TX_ID);
+        assertThat(updated.getTitle()).isEqualTo(ESPRESSO);
         assertThat(updated.getAmount()).isEqualByComparingTo(new BigDecimal("4.50"));
         assertThat(updated.getCategory()).isEqualTo(Category.OTHER);
         assertThat(updated.getDate()).isEqualTo(LocalDate.of(2024, 2, 20));
@@ -206,7 +210,7 @@ class TransactionServiceTest {
         LocalDate from = LocalDate.of(2024, 1, 1);
         LocalDate to = LocalDate.of(2024, 6, 30);
         TransactionService service = buildService(List.of(
-                tx("1", "Coffee", BigDecimal.ONE, Category.FOOD, LocalDate.of(2024, 8, 1), null)));
+                tx("1", COFFEE, BigDecimal.ONE, Category.FOOD, LocalDate.of(2024, 8, 1), null)));
         assertThat(service.filterByCategoryAndDateRange(Category.FOOD, from, to)).isEmpty();
     }
 }

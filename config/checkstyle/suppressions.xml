@@ -1,0 +1,10 @@
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+  <!-- Test methods use underscore-separated names (e.g. add_returnsId) for readability -->
+  <suppress checks="MethodName" files="[\\/]test[\\/]"/>
+  <!-- Test methods and Cucumber step definitions don't need Javadoc -->
+  <suppress checks="MissingJavadocMethod" files="[\\/]test[\\/]"/>
+  <suppress checks="MissingJavadocType" files="[\\/]test[\\/]"/>
+</suppressions>

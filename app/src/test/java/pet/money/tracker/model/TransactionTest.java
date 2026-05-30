@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 class TransactionTest {
 
+    private static final String TX_ID = "id-1";
+
     private Transaction make(String id) {
         return new Transaction(id, "Coffee", new BigDecimal("3.50"),
                 Category.FOOD, LocalDate.of(2024, 1, 15), "morning");
@@ -26,21 +28,21 @@ class TransactionTest {
 
     @Test
     void equals_sameId_isEqual() {
-        assertThat(make("id-1")).isEqualTo(make("id-1"));
+        assertThat(make(TX_ID)).isEqualTo(make(TX_ID));
     }
 
     @Test
     void equals_differentId_notEqual() {
-        assertThat(make("id-1")).isNotEqualTo(make("id-2"));
+        assertThat(make(TX_ID)).isNotEqualTo(make("id-2"));
     }
 
     @Test
     void hashCode_consistentWithEquals() {
-        assertThat(make("id-1").hashCode()).isEqualTo(make("id-1").hashCode());
+        assertThat(make(TX_ID).hashCode()).isEqualTo(make(TX_ID).hashCode());
     }
 
     @Test
-    void toString_isNotNull() {
-        assertThat(make("id-1").toString()).isNotNull().contains("id-1");
+    void toString_containsId() {
+        assertThat(make(TX_ID).toString()).isNotNull().contains(TX_ID);
     }
 }

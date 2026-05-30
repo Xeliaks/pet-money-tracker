@@ -18,6 +18,8 @@ import pet.money.tracker.storage.StorageProvider;
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceTest {
 
+    private static final String AMOUNT_TEN = "10.00";
+
     @Mock
     private StorageProvider mockStorage;
 
@@ -56,11 +58,11 @@ class StatisticsServiceTest {
     @Test
     void totalForPeriod_excludesOutOfRange() {
         StatisticsService stats = buildStatsService(List.of(
-                tx("1", new BigDecimal("10.00"), Category.FOOD, LocalDate.of(2024, 3, 15)),
+                tx("1", new BigDecimal(AMOUNT_TEN), Category.FOOD, LocalDate.of(2024, 3, 15)),
                 tx("2", new BigDecimal("20.00"), Category.FOOD, LocalDate.of(2024, 8, 1))));
         BigDecimal total = stats.totalForPeriod(
                 LocalDate.of(2024, 1, 1), LocalDate.of(2024, 6, 30));
-        assertThat(total).isEqualByComparingTo(new BigDecimal("10.00"));
+        assertThat(total).isEqualByComparingTo(new BigDecimal(AMOUNT_TEN));
     }
 
     @Test
@@ -73,13 +75,13 @@ class StatisticsServiceTest {
     @Test
     void averageForPeriod_roundsToTwoDecimalPlaces() {
         StatisticsService stats = buildStatsService(List.of(
-                tx("1", new BigDecimal("10.00"), Category.FOOD, LocalDate.of(2024, 6, 1)),
-                tx("2", new BigDecimal("10.00"), Category.FOOD, LocalDate.of(2024, 6, 2)),
-                tx("3", new BigDecimal("10.00"), Category.FOOD, LocalDate.of(2024, 6, 3))));
+                tx("1", new BigDecimal(AMOUNT_TEN), Category.FOOD, LocalDate.of(2024, 6, 1)),
+                tx("2", new BigDecimal(AMOUNT_TEN), Category.FOOD, LocalDate.of(2024, 6, 2)),
+                tx("3", new BigDecimal(AMOUNT_TEN), Category.FOOD, LocalDate.of(2024, 6, 3))));
         BigDecimal avg = stats.averageForPeriod(
                 LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31));
         assertThat(avg.scale()).isEqualTo(2);
-        assertThat(avg).isEqualByComparingTo(new BigDecimal("10.00"));
+        assertThat(avg).isEqualByComparingTo(new BigDecimal(AMOUNT_TEN));
     }
 
     @Test

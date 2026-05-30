@@ -13,7 +13,7 @@ public interface StorageProvider {
      * @return mutable list of transactions (empty if the store has no data yet)
      * @throws StorageException if the data cannot be read
      */
-    List<Transaction> loadAll() throws StorageException;
+    List<Transaction> loadAll();
 
     /**
      * Persists the complete list of transactions, replacing any existing data.
@@ -21,5 +21,5 @@ public interface StorageProvider {
      * @param transactions the authoritative list to save
      * @throws StorageException if the data cannot be written
      */
-    void saveAll(List<Transaction> transactions) throws StorageException;
+    void saveAll(List<Transaction> transactions);
 }

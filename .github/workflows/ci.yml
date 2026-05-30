@@ -33,8 +33,14 @@ jobs:
       - name: JaCoCo coverage report
         run: ./gradlew jacocoTestReport
 
-      - name: Checkstyle
+      - name: JaCoCo coverage gate
+        run: ./gradlew jacocoTestCoverageVerification
+
+      - name: Checkstyle (main)
         run: ./gradlew checkstyleMain
+
+      - name: Checkstyle (test)
+        run: ./gradlew checkstyleTest
 
       - name: SpotBugs
         run: ./gradlew spotbugsMain

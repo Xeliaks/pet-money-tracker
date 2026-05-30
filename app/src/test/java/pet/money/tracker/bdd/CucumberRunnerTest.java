@@ -14,5 +14,6 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "pet.money.tracker.bdd")
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class CucumberRunnerTest {
 }
