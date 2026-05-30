@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import pet.money.tracker.exception.TransactionNotFoundException;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 import pet.money.tracker.patterns.SortByAmount;
 import pet.money.tracker.patterns.SortByDate;
@@ -53,7 +55,7 @@ public final class TransactionService {
     public Transaction add(String title, BigDecimal amount, Category category,
                            LocalDate date, String description) {
         Transaction t = new Transaction(
-                UUID.randomUUID().toString(), title, amount, category, date, description);
+                UUID.randomUUID().toString(), title, Money.valueOf(amount), category, date, description);
         cache.add(t);
         persist();
         notifyObservers(new TransactionEvent(TransactionEvent.EventType.ADDED, t));
@@ -100,7 +102,7 @@ public final class TransactionService {
             t.setTitle(title);
         }
         if (amount != null) {
-            t.setAmount(amount);
+            t.setAmount(Money.valueOf(amount));
         }
         if (category != null) {
             t.setCategory(category);
@@ -152,7 +154,7 @@ public final class TransactionService {
      */
     public List<Transaction> filterByCategory(Category category) {
         return cache.stream()
-                .filter(t -> t.getCategory() == category)
+                .filter(categoryMatches(category))
                 .collect(Collectors.toList());
     }
 
@@ -163,7 +165,7 @@ public final class TransactionService {
      */
     public List<Transaction> filterByDateRange(LocalDate from, LocalDate to) {
         return cache.stream()
-                .filter(t -> !t.getDate().isBefore(from) && !t.getDate().isAfter(to))
+                .filter(dateInRange(from, to))
                 .collect(Collectors.toList());
     }
 
@@ -176,8 +178,8 @@ public final class TransactionService {
     public List<Transaction> filterByCategoryAndDateRange(
             Category category, LocalDate from, LocalDate to) {
         return cache.stream()
-                .filter(t -> t.getCategory() == category)
-                .filter(t -> !t.getDate().isBefore(from) && !t.getDate().isAfter(to))
+                .filter(categoryMatches(category))
+                .filter(dateInRange(from, to))
                 .collect(Collectors.toList());
     }
 
@@ -211,5 +213,13 @@ public final class TransactionService {
 
     private boolean contains(String field, String lowerKeyword) {
         return field != null && field.toLowerCase(Locale.ROOT).contains(lowerKeyword);
+    }
+
+    private Predicate<Transaction> categoryMatches(Category category) {
+        return t -> t.getCategory() == category;
+    }
+
+    private Predicate<Transaction> dateInRange(LocalDate from, LocalDate to) {
+        return t -> !t.getDate().isBefore(from) && !t.getDate().isAfter(to);
     }
 }

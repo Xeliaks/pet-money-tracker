@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 
 class FormatUtilsTest {
@@ -26,22 +27,22 @@ class FormatUtilsTest {
 
     @Test
     void formatTransaction_returnsNonNull() {
-        Transaction t = new Transaction("abc12345", "Coffee", new BigDecimal(AMOUNT),
+        Transaction t = new Transaction("abc12345", "Coffee", Money.valueOf(new BigDecimal(AMOUNT)),
                 Category.FOOD, LocalDate.of(2024, 1, 15), null);
         assertThat(FormatUtils.formatTransaction(t)).isNotNull();
     }
 
     @Test
     void formatTransaction_longId_isTruncatedToEightChars() {
-        Transaction t = new Transaction("a1b2c3d4-long-uuid", "Coffee", new BigDecimal(AMOUNT),
-                Category.FOOD, LocalDate.of(2024, 1, 15), null);
+        Transaction t = new Transaction("a1b2c3d4-long-uuid", "Coffee",
+                Money.valueOf(new BigDecimal(AMOUNT)), Category.FOOD, LocalDate.of(2024, 1, 15), null);
         String row = FormatUtils.formatTransaction(t);
         assertThat(row).doesNotContain("a1b2c3d4-long-uuid");
     }
 
     @Test
     void formatTransaction_withDescription_includesDescription() {
-        Transaction t = new Transaction("abc12345", "Coffee", new BigDecimal(AMOUNT),
+        Transaction t = new Transaction("abc12345", "Coffee", Money.valueOf(new BigDecimal(AMOUNT)),
                 Category.FOOD, LocalDate.of(2024, 1, 15), "my note");
         assertThat(FormatUtils.formatTransaction(t)).contains("my note");
     }
@@ -50,7 +51,7 @@ class FormatUtilsTest {
     void formatTransaction_longTitle_isTruncated() {
         Transaction t = new Transaction("abc12345",
                 "This title is definitely longer than twenty-five characters",
-                new BigDecimal(AMOUNT), Category.FOOD, LocalDate.of(2024, 1, 15), null);
+                Money.valueOf(new BigDecimal(AMOUNT)), Category.FOOD, LocalDate.of(2024, 1, 15), null);
         String row = FormatUtils.formatTransaction(t);
         assertThat(row).doesNotContain("This title is definitely longer than twenty-five characters");
     }

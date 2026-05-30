@@ -70,7 +70,7 @@ public final class FormatUtils {
         return String.format(ROW_FORMAT,
                 shortId,
                 truncate(t.getTitle(), COL_TITLE),
-                formatAmount(t.getAmount()),
+                t.getAmount().display(),
                 t.getCategory(),
                 DateUtils.format(t.getDate()),
                 truncate(desc, COL_DESC));

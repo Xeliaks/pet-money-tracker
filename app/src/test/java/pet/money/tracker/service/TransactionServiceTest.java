@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pet.money.tracker.exception.TransactionNotFoundException;
 import pet.money.tracker.model.Category;
+import pet.money.tracker.model.Money;
 import pet.money.tracker.model.Transaction;
 import pet.money.tracker.storage.StorageProvider;
 
@@ -36,7 +37,7 @@ class TransactionServiceTest {
 
     private Transaction tx(String id, String title, BigDecimal amount,
                            Category category, LocalDate date, String desc) {
-        return new Transaction(id, title, amount, category, date, desc);
+        return new Transaction(id, title, Money.valueOf(amount), category, date, desc);
     }
 
     // ── Black-box ────────────────────────────────────────────────────────────
@@ -87,7 +88,7 @@ class TransactionServiceTest {
         service.update(TX_ID, ESPRESSO, null, null, null, null);
         Transaction updated = service.findById(TX_ID);
         assertThat(updated.getTitle()).isEqualTo(ESPRESSO);
-        assertThat(updated.getAmount()).isEqualByComparingTo(new BigDecimal("3.00"));
+        assertThat(updated.getAmount().value()).isEqualByComparingTo(new BigDecimal("3.00"));
         assertThat(updated.getCategory()).isEqualTo(Category.FOOD);
         assertThat(updated.getDate()).isEqualTo(LocalDate.of(2024, 1, 10));
         assertThat(updated.getDescription()).isEqualTo("old note");
@@ -148,7 +149,7 @@ class TransactionServiceTest {
                 tx("2", "B", new BigDecimal("5.00"), Category.FOOD, LocalDate.now(), null),
                 tx("3", "C", new BigDecimal("20.00"), Category.FOOD, LocalDate.now(), null));
         List<Transaction> sorted = service.sortByAmount(input, false);
-        assertThat(sorted.get(0).getAmount()).isEqualByComparingTo(new BigDecimal("20.00"));
+        assertThat(sorted.get(0).getAmount().value()).isEqualByComparingTo(new BigDecimal("20.00"));
     }
 
     @Test
@@ -179,7 +180,7 @@ class TransactionServiceTest {
                 Category.OTHER, LocalDate.of(2024, 2, 20), "new note");
         Transaction updated = service.findById(TX_ID);
         assertThat(updated.getTitle()).isEqualTo(ESPRESSO);
-        assertThat(updated.getAmount()).isEqualByComparingTo(new BigDecimal("4.50"));
+        assertThat(updated.getAmount().value()).isEqualByComparingTo(new BigDecimal("4.50"));
         assertThat(updated.getCategory()).isEqualTo(Category.OTHER);
         assertThat(updated.getDate()).isEqualTo(LocalDate.of(2024, 2, 20));
         assertThat(updated.getDescription()).isEqualTo("new note");
@@ -192,7 +193,7 @@ class TransactionServiceTest {
                 tx("1", "A", new BigDecimal("10.00"), Category.FOOD, LocalDate.now(), null),
                 tx("2", "B", new BigDecimal("5.00"), Category.FOOD, LocalDate.now(), null));
         List<Transaction> sorted = service.sortByAmount(input, true);
-        assertThat(sorted.get(0).getAmount()).isEqualByComparingTo(new BigDecimal("5.00"));
+        assertThat(sorted.get(0).getAmount().value()).isEqualByComparingTo(new BigDecimal("5.00"));
     }
 
     @Test
