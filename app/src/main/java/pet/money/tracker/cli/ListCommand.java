@@ -2,6 +2,9 @@ package pet.money.tracker.cli;
 
 import java.util.List;
 import pet.money.tracker.model.Transaction;
+import pet.money.tracker.patterns.SortByAmount;
+import pet.money.tracker.patterns.SortByDate;
+import pet.money.tracker.patterns.SortStrategy;
 import pet.money.tracker.util.FormatUtils;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -25,12 +28,10 @@ public class ListCommand implements Runnable {
         List<Transaction> all = MainCommand.getTxService().findAll();
         boolean ascending = !"desc".equalsIgnoreCase(order);
 
-        List<Transaction> sorted;
-        if ("amount".equalsIgnoreCase(sortBy)) {
-            sorted = MainCommand.getTxService().sortByAmount(all, ascending);
-        } else {
-            sorted = MainCommand.getTxService().sortByDate(all, ascending);
-        }
+        SortStrategy strategy = "amount".equalsIgnoreCase(sortBy)
+                ? new SortByAmount(ascending)
+                : new SortByDate(ascending);
+        List<Transaction> sorted = strategy.sort(all);
 
         if (sorted.isEmpty()) {
             System.out.println("No transactions found.");

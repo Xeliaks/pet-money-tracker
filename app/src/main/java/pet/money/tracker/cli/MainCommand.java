@@ -3,10 +3,11 @@ package pet.money.tracker.cli;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import pet.money.tracker.patterns.StatisticsCacheObserver;
+import pet.money.tracker.patterns.StorageProviderFactory;
 import pet.money.tracker.service.ExportService;
 import pet.money.tracker.service.StatisticsService;
 import pet.money.tracker.service.TransactionService;
-import pet.money.tracker.storage.JsonStorageProvider;
 import pet.money.tracker.storage.StorageProvider;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -48,8 +49,10 @@ public class MainCommand implements Runnable {
         } catch (IOException e) {
             System.err.println("Warning: could not create data directory: " + e.getMessage());
         }
-        StorageProvider storage = new JsonStorageProvider(dataDir.resolve("transactions.json"));
+        StorageProvider storage = StorageProviderFactory.forFormat("json")
+                .createProvider(dataDir.resolve("transactions.json"));
         txService = new TransactionService(storage);
+        txService.addObserver(new StatisticsCacheObserver());
         statsService = new StatisticsService(txService);
         exportService = new ExportService();
     }

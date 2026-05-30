@@ -3,7 +3,6 @@ package pet.money.tracker.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -11,6 +10,10 @@ import java.util.stream.Collectors;
 import pet.money.tracker.exception.TransactionNotFoundException;
 import pet.money.tracker.model.Category;
 import pet.money.tracker.model.Transaction;
+import pet.money.tracker.patterns.SortByAmount;
+import pet.money.tracker.patterns.SortByDate;
+import pet.money.tracker.patterns.TransactionEvent;
+import pet.money.tracker.patterns.TransactionObserver;
 import pet.money.tracker.storage.StorageProvider;
 
 /** Core business logic for managing transactions. */
@@ -18,6 +21,7 @@ public final class TransactionService {
 
     private final StorageProvider storage;
     private final List<Transaction> cache;
+    private final List<TransactionObserver> observers = new ArrayList<>();
 
     /**
      * @param storage the persistence provider (JSON file or in-memory for tests)
@@ -25,6 +29,15 @@ public final class TransactionService {
     public TransactionService(StorageProvider storage) {
         this.storage = storage;
         this.cache = new ArrayList<>(storage.loadAll());
+    }
+
+    /**
+     * Registers an observer to be notified after every add, update, or delete.
+     *
+     * @param observer the observer to register
+     */
+    public void addObserver(TransactionObserver observer) {
+        observers.add(observer);
     }
 
     /**
@@ -43,6 +56,7 @@ public final class TransactionService {
                 UUID.randomUUID().toString(), title, amount, category, date, description);
         cache.add(t);
         persist();
+        notifyObservers(new TransactionEvent(TransactionEvent.EventType.ADDED, t));
         return t;
     }
 
@@ -98,6 +112,7 @@ public final class TransactionService {
             t.setDescription(description);
         }
         persist();
+        notifyObservers(new TransactionEvent(TransactionEvent.EventType.UPDATED, t));
         return t;
     }
 
@@ -111,6 +126,7 @@ public final class TransactionService {
         Transaction t = findById(id);
         cache.remove(t);
         persist();
+        notifyObservers(new TransactionEvent(TransactionEvent.EventType.DELETED, t));
     }
 
     /**
@@ -171,10 +187,7 @@ public final class TransactionService {
      * @return a new sorted list
      */
     public List<Transaction> sortByDate(List<Transaction> list, boolean ascending) {
-        Comparator<Transaction> cmp = Comparator.comparing(Transaction::getDate);
-        return list.stream()
-                .sorted(ascending ? cmp : cmp.reversed())
-                .collect(Collectors.toList());
+        return new SortByDate(ascending).sort(list);
     }
 
     /**
@@ -183,14 +196,17 @@ public final class TransactionService {
      * @return a new sorted list
      */
     public List<Transaction> sortByAmount(List<Transaction> list, boolean ascending) {
-        Comparator<Transaction> cmp = Comparator.comparing(Transaction::getAmount);
-        return list.stream()
-                .sorted(ascending ? cmp : cmp.reversed())
-                .collect(Collectors.toList());
+        return new SortByAmount(ascending).sort(list);
     }
 
     private void persist() {
         storage.saveAll(cache);
+    }
+
+    private void notifyObservers(TransactionEvent event) {
+        for (TransactionObserver observer : observers) {
+            observer.onTransactionChanged(event);
+        }
     }
 
     private boolean contains(String field, String lowerKeyword) {
