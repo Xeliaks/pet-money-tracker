@@ -82,7 +82,7 @@ public class MainCommand implements Runnable {
     public void run() {
         CommandLine cmd = spec.commandLine();
         try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
-            cmd.getOut().println("expense-tracker shell — type 'help' for commands, 'exit' to quit.");
+            cmd.getOut().println("expense-tracker shell - type 'help' for commands, 'exit' to quit.");
             String line = readNextLine(scanner, cmd);
             while (line != null && !isExitCommand(line)) {
                 if (!line.isEmpty()) {
