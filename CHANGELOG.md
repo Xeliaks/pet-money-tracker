@@ -5,6 +5,8 @@ Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic V
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-31
+
 ### Added
 - Interactive REPL shell — run the app with no arguments for a persistent console
 
