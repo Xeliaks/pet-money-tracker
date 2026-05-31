@@ -3,7 +3,6 @@ package pet.money.tracker.cli;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import pet.money.tracker.patterns.StatisticsCacheObserver;
 import pet.money.tracker.patterns.StorageProviderFactory;
 import pet.money.tracker.service.ExportService;
 import pet.money.tracker.service.StatisticsService;
@@ -52,7 +51,6 @@ public class MainCommand implements Runnable {
         StorageProvider storage = StorageProviderFactory.forFormat("json")
                 .createProvider(dataDir.resolve("transactions.json"));
         txService = new TransactionService(storage);
-        txService.addObserver(new StatisticsCacheObserver());
         statsService = new StatisticsService(txService);
         exportService = new ExportService();
     }

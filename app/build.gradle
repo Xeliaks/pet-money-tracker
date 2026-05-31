@@ -52,7 +52,6 @@ jacoco {
 def jacocoExcludes = [
     'pet/money/tracker/cli/**',
     'pet/money/tracker/exception/**',
-    'pet/money/tracker/patterns/**',
     'pet/money/tracker/App.class'
 ]
 

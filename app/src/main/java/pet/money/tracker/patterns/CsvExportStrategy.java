@@ -23,8 +23,8 @@ public class CsvExportStrategy extends AbstractExportStrategy {
         CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setHeader(CSV_HEADERS)
                 .build();
-        Writer writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
-        try (CSVPrinter printer = new CSVPrinter(writer, format)) {
+        try (Writer writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
+             CSVPrinter printer = new CSVPrinter(writer, format)) {
             for (Transaction t : transactions) {
                 printer.printRecord(
                         t.getId(),

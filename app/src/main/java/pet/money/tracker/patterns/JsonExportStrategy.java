@@ -11,13 +11,14 @@ import pet.money.tracker.model.Transaction;
 /** Strategy that serialises transactions to a pretty-printed JSON file. */
 public class JsonExportStrategy extends AbstractExportStrategy {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .enable(SerializationFeature.INDENT_OUTPUT);
+
     @Override
     protected void doExport(List<Transaction> transactions, Path outputPath) throws IOException {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.writeValue(outputPath.toFile(), transactions);
+        MAPPER.writeValue(outputPath.toFile(), transactions);
     }
 
     @Override
