@@ -2,6 +2,16 @@
 
 ![CI](https://github.com/Xeliaks/pet-money-tracker/actions/workflows/ci.yml/badge.svg)
 
+![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-9.2-02303A?logo=gradle&logoColor=white)
+![JUnit5](https://img.shields.io/badge/JUnit_5-5.12-25A162?logo=junit5&logoColor=white)
+![Cucumber](https://img.shields.io/badge/Cucumber-7.21-23D96C?logo=cucumber&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-2088FF?logo=github-actions&logoColor=white)
+![JaCoCo](https://img.shields.io/badge/JaCoCo-0.8.12-C21325?logo=jacoco&logoColor=white)
+![Checkstyle](https://img.shields.io/badge/Checkstyle-10.21-4D9900)
+![SpotBugs](https://img.shields.io/badge/SpotBugs-4.9-4B0082)
+![PMD](https://img.shields.io/badge/PMD-7.9-FF6600)
+
 A command-line application for tracking personal expenses. Add, edit, delete, and categorise
 transactions; filter and search by keyword, category or date range; export to JSON or CSV;
 and view summary statistics.
