@@ -3,7 +3,8 @@
 ![CI](https://github.com/Xeliaks/pet-money-tracker/actions/workflows/ci.yml/badge.svg)
 
 A command-line application for tracking personal expenses. Add, edit, delete, and categorise
-transactions; compute summaries by period and category; export reports to JSON or CSV.
+transactions; filter and search by keyword, category, or date range; export to JSON or CSV;
+and view summary statistics.
 
 ---
 
@@ -28,34 +29,51 @@ On Windows use `gradlew.bat` instead of `./gradlew`.
 
 ## Run
 
-```bash
-# Using the Gradle application plugin (development)
-./gradlew run --args="--help"
+**Interactive shell** — run with no arguments to open a persistent console:
 
-# Or build a distribution and run the script
+```bash
 ./gradlew installDist
-./app/build/install/app/bin/app --help
+./app/build/install/app/bin/app          # Linux/macOS
+app\build\install\app\bin\app.bat        # Windows
+```
+
+```
+expense-tracker shell — type 'help' for commands, 'exit' to quit.
+> add -t "Coffee" -a 3.50 -c FOOD
+> list
+> exit
+```
+
+**One-shot commands** — pass a subcommand directly:
+
+```bash
+./gradlew run --args="--help"
+./gradlew run --args="add -t Lunch -a 12.50 -c FOOD"
 ```
 
 ---
 
-## Available Commands
+## Commands
 
-| Command    | Description                              | Key Options                                   |
-|------------|------------------------------------------|-----------------------------------------------|
-| `add`      | Add a new transaction                    | `-t` title, `-a` amount, `-c` category, `-d` date, `--desc` description |
-| `list`     | List all transactions                    | `--sort-by date\|amount`, `--order asc\|desc`  |
-| `update`   | Update a transaction by ID               | `--id`, then any field option to overwrite     |
-| `delete`   | Delete a transaction by ID               | `--id`                                         |
-| `search`   | Search transactions by keyword           | `--keyword`                                    |
-| `filter`   | Filter by category and/or date range     | `--category`, `--from`, `--to`                 |
-| `export`   | Export transactions to JSON or CSV       | `--format json\|csv`, `--output <path>`        |
-| `stats`    | Show summary statistics                  | _(no required options)_                        |
+| Command  | Description                          | Key Options                                                    |
+|----------|--------------------------------------|----------------------------------------------------------------|
+| `add`    | Add a new transaction                | `-t` title, `-a` amount, `-c` category, `-d` date, `--desc`   |
+| `list`   | List all transactions                | `--sort-by date\|amount`, `--order asc\|desc`                  |
+| `update` | Update a transaction by ID           | `--id`, then any field option to overwrite                     |
+| `delete` | Delete a transaction by ID           | `--id`                                                         |
+| `search` | Search transactions by keyword       | `--keyword`                                                    |
+| `filter` | Filter by category and/or date range | `--category`, `--from`, `--to`                                 |
+| `export` | Export transactions to JSON or CSV   | `--format json\|csv`, `--output <path>`                        |
+| `stats`  | Show summary statistics              |                                                                |
+
+### Categories
+
+`FOOD` · `TRANSPORT` · `HOUSING` · `ENTERTAINMENT` · `HEALTH` · `EDUCATION` · `SHOPPING` · `UTILITIES` · `INCOME` · `OTHER`
 
 ### Examples
 
 ```bash
-# Add a food expense
+# Add an expense
 ./gradlew run --args="add -t Lunch -a 12.50 -c FOOD -d 2026-05-29"
 
 # List all, sorted by amount descending
@@ -66,14 +84,7 @@ On Windows use `gradlew.bat` instead of `./gradlew`.
 
 # Export to CSV
 ./gradlew run --args="export --format csv --output expenses.csv"
-
-# Show statistics
-./gradlew run --args="stats"
 ```
-
-### Categories
-
-`FOOD` · `TRANSPORT` · `HOUSING` · `ENTERTAINMENT` · `HEALTH` · `EDUCATION` · `SHOPPING` · `UTILITIES` · `INCOME` · `OTHER`
 
 ---
 
@@ -86,11 +97,12 @@ automatically on first run.
 
 ## Branching Strategy
 
-| Branch | Purpose |
-|---|---|
-| `main` | Stable, tagged releases only |
-| `develop` | Integration branch — all PRs target here |
-| `feature/<name>` | Individual feature work |
+| Branch           | Purpose                                 |
+|------------------|-----------------------------------------|
+| `main`           | Stable, tagged releases only            |
+| `develop`        | Integration branch — all PRs target here|
+| `feature/<name>` | Individual feature work                 |
+| `fix/<name>`     | Bug fixes                               |
 
 Releases are tagged on `main` and published as GitHub Releases.
 
@@ -111,4 +123,4 @@ Releases are tagged on `main` and published as GitHub Releases.
 
 ## License
 
-For educational use.
+MIT License — Copyright (c) 2026 Xeliaks
