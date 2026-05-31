@@ -6,39 +6,47 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import pet.money.tracker.model.Category;
 import pet.money.tracker.model.Transaction;
+import pet.money.tracker.patterns.StatisticsCacheObserver;
 
 /** Computes aggregate statistics over the transaction list. */
 public class StatisticsService {
 
     private final TransactionService txService;
+    private final StatisticsCacheObserver cacheObserver;
+
+    private BigDecimal cachedGrandTotal;
+    private Map<Category, BigDecimal> cachedTotalByCategory;
+    private Map<Category, Long> cachedCountByCategory;
 
     /**
      * @param txService source of transaction data
      */
     public StatisticsService(TransactionService txService) {
         this.txService = txService;
+        this.cacheObserver = new StatisticsCacheObserver();
+        txService.addObserver(cacheObserver);
     }
 
     /**
      * @return number of transactions per category
      */
     public Map<Category, Long> countByCategory() {
-        return txService.findAll().stream()
-                .collect(Collectors.groupingBy(Transaction::getCategory, Collectors.counting()));
+        if (cachedCountByCategory == null || cacheObserver.isDirty()) {
+            refreshCaches();
+        }
+        return Map.copyOf(cachedCountByCategory);
     }
 
     /**
      * @return total amount spent per category
      */
     public Map<Category, BigDecimal> totalByCategory() {
-        Map<Category, BigDecimal> result = new LinkedHashMap<>();
-        for (Transaction t : txService.findAll()) {
-            result.merge(t.getCategory(), t.getAmount().value(), BigDecimal::add);
+        if (cachedTotalByCategory == null || cacheObserver.isDirty()) {
+            refreshCaches();
         }
-        return result;
+        return Map.copyOf(cachedTotalByCategory);
     }
 
     /**
@@ -72,8 +80,25 @@ public class StatisticsService {
      * @return sum of all transaction amounts
      */
     public BigDecimal grandTotal() {
-        return txService.findAll().stream()
-                .map(t -> t.getAmount().value())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (cachedGrandTotal == null || cacheObserver.isDirty()) {
+            refreshCaches();
+        }
+        return cachedGrandTotal;
+    }
+
+    private void refreshCaches() {
+        List<Transaction> all = txService.findAll();
+        Map<Category, Long> counts = new LinkedHashMap<>();
+        Map<Category, BigDecimal> totals = new LinkedHashMap<>();
+        BigDecimal total = BigDecimal.ZERO;
+        for (Transaction t : all) {
+            counts.merge(t.getCategory(), 1L, Long::sum);
+            totals.merge(t.getCategory(), t.getAmount().value(), BigDecimal::add);
+            total = total.add(t.getAmount().value());
+        }
+        cachedCountByCategory = counts;
+        cachedTotalByCategory = totals;
+        cachedGrandTotal = total;
+        cacheObserver.markClean();
     }
 }

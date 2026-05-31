@@ -92,4 +92,15 @@ class StatisticsServiceTest {
                 tx("2", new BigDecimal("50.00"), Category.TRANSPORT, LocalDate.now())));
         assertThat(stats.grandTotal()).isEqualByComparingTo(new BigDecimal("150.00"));
     }
+
+    @Test
+    void grandTotal_afterAddTransaction_cacheIsInvalidated() {
+        when(mockStorage.loadAll()).thenReturn(new ArrayList<>(List.of(
+                tx("1", new BigDecimal("100.00"), Category.FOOD, LocalDate.now()))));
+        TransactionService txService = new TransactionService(mockStorage);
+        StatisticsService stats = new StatisticsService(txService);
+        assertThat(stats.grandTotal()).isEqualByComparingTo(new BigDecimal("100.00"));
+        txService.add("Extra", new BigDecimal("50.00"), Category.FOOD, LocalDate.now(), null);
+        assertThat(stats.grandTotal()).isEqualByComparingTo(new BigDecimal("150.00"));
+    }
 }
